@@ -31,6 +31,8 @@ elsif ($action eq 'toapi') {
   $api = encode_json(@events > 1 ? \@events : $events[0]);
 }
 
+print $cgi->header();
+
 print $cgi->start_html(
   -title => "API conversion",
 );
