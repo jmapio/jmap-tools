@@ -33,6 +33,7 @@ elsif ($action eq 'toapi') {
   my @events = eval { $cdt->vcalendarToEvents($ical) };
   error('invalid ical', $@) if $@;
   error('no events') unless @events;
+  map { $cdt->_minimise($_) } @events;
   $api = JSON::XS->new->pretty(1)->canonical(1)->encode(@events > 1 ? \@events : $events[0]);
 }
 
@@ -51,7 +52,7 @@ print "<tr><th>API</th><th></th><th>iCal</th></tr>\n";
 print "<tr><td>";
 print $cgi->textarea(
   -name => 'api',
-  -default => encode_utf8 $api || '',
+  -default => encode_utf8($api || ''),
   -override => 1,
   -rows => '20',
   -columns => '60',
@@ -65,7 +66,7 @@ print $cgi->submit('action', 'toapi');
 print "</td><td>";
 print $cgi->textarea(
   -name => 'ical',
-  -default => encode_utf8 $ical || '',
+  -default => encode_utf8($ical || ''),
   -override => 1,
   -rows => '20',
   -columns => '60',
